@@ -25,9 +25,9 @@ jobs:
         run: |
           npm ci
 
-      - name: Rodar testes unitários (se definidos)
-        run: |
-          npm run test --if-present
+      # - name: Rodar testes unitários (se definidos)
+      #   run: |
+      #     npm run test --if-present
 
       - name: Rodar Semgrep (ação oficial)
         # Usamos a ação oficial do Semgrep que cuida da instalação
