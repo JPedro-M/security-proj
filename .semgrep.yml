@@ -21,7 +21,7 @@ rules:
       - pattern: $VAR = "secret"
       - pattern: $VAR = 'secret'
       - pattern: $VAR = "JWT_SECRET"
-    message: "Possível segredo hard-coded no código. Use variáveis de ambiente e um cofre de segredos."
+    message: "Possível segredo hard-coded no código. Use variáveis de ambiente e um cofre de segredos." 
     languages: [javascript, typescript]
     severity: WARNING
 
@@ -72,5 +72,31 @@ rules:
       - pattern: connection.query($SQL)
       - pattern: queryRunner.query($SQL)
     message: "Uso de query raw no TypeORM — verifique se os parâmetros são passados separadamente para evitar SQL injection." 
+    languages: [javascript, typescript]
+    severity: ERROR
+
+  - id: mysql2-pool-execute-string-concat
+    patterns:
+      - pattern: $POOL.execute($SQL + $EXPR)
+      - pattern: $POOL.query($SQL + $EXPR)
+      - pattern: $POOL.execute($SQL)
+      - pattern: $POOL.query($SQL)
+    message: "Possível SQL injection: `pool.execute`/`pool.query` chamado com string concatenada ou template — use parâmetros preparados (placeholders) em vez de concatenar/ interpolar valores do usuário."
+    languages: [javascript, typescript]
+    severity: ERROR
+
+  - id: mysql2-pool-template-literal
+    patterns:
+      - pattern: $POOL.execute(`$TEMPLATE`)
+      - pattern: $POOL.query(`$TEMPLATE`)
+    message: "Template literal passado diretamente para `pool.execute`/`pool.query` — pode conter interpolação de valores não parametrizados (risco de SQL injection). Use parâmetros preparados." 
+    languages: [javascript, typescript]
+    severity: ERROR
+
+  - id: mysql2-pool-interpolated-string
+    patterns:
+      - pattern: $POOL.execute($STR + $EXPR)
+      - pattern: $POOL.query($STR + $EXPR)
+    message: "Construção dinâmica de query (concatenação) detectada em mysql2 `pool.execute`/`pool.query` — prefira `pool.execute(sql, [params])` ou query parametrizada." 
     languages: [javascript, typescript]
     severity: ERROR
