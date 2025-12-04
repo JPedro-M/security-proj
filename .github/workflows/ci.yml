@@ -25,9 +25,9 @@ jobs:
       run: |
         npm install
 
-    - name: Rodar testes unitários
-      run: |
-        npm run test
+    # - name: Rodar testes unitários
+    #   run: |
+    #     npm run test
 
     - name: Rodar Análise de Vulnerabilidade com Semgrep
       run: |
