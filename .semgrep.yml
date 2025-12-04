@@ -34,3 +34,43 @@ rules:
 
 # Dica: para regras mais precisas e com exemplos de correção, consulte a documentação do Semgrep
 # e adapte os padrões ao seu estilo de código NestJS/TypeScript.
+
+  # Regras adicionais para identificar padrões de SQL injection comuns
+  - id: js-sql-template-literal-in-query
+    patterns:
+      - pattern: $DB.query(`$TEMPLATE`)
+      - pattern: manager.query(`$TEMPLATE`)
+      - pattern: getManager().query(`$TEMPLATE`)
+      - pattern: getRepository($R).query(`$TEMPLATE`)
+    message: "Template literal passado diretamente para uma query — pode conter interpolação e levar a SQL injection. Use parâmetros preparados em vez de interpolação." 
+    languages: [javascript, typescript]
+    severity: ERROR
+
+  - id: js-sql-string-concat-in-query
+    patterns:
+      - pattern: $DB.query($STR + $EXPR)
+      - pattern: manager.query($STR + $EXPR)
+      - pattern: getManager().query($STR + $EXPR)
+      - pattern: getRepository($R).query($STR + $EXPR)
+    message: "String concatenation usada para construir uma query — risco de SQL injection. Use bindings/parameters." 
+    languages: [javascript, typescript]
+    severity: ERROR
+
+  - id: prisma-raw-query-unsafe
+    patterns:
+      - pattern: prisma.$queryRaw($RAW)
+      - pattern: prisma.$executeRaw($RAW)
+      - pattern: prisma.$queryRawUnsafe($RAW)
+      - pattern: prisma.$executeRawUnsafe($RAW)
+    message: "Uso de Prisma raw query. Confirme que parâmetros não são concatenados diretamente — prefira queries parametrizadas ou query builders seguros." 
+    languages: [javascript, typescript]
+    severity: ERROR
+
+  - id: typeorm-manager-raw-query
+    patterns:
+      - pattern: manager.query($SQL)
+      - pattern: connection.query($SQL)
+      - pattern: queryRunner.query($SQL)
+    message: "Uso de query raw no TypeORM — verifique se os parâmetros são passados separadamente para evitar SQL injection." 
+    languages: [javascript, typescript]
+    severity: ERROR

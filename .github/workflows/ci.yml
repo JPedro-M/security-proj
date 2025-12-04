@@ -35,15 +35,7 @@ jobs:
         with:
           # Aponta para o arquivo de regras no repositório
           config: .semgrep.yml
-          # Gera saída SARIF para integração com GitHub
-          sarif_output_file: semgrep.sarif
-
-      - name: Fazer upload do relatório SARIF (opcional)
-        # Isso permite que o GitHub Code Scanning mostre os resultados
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: semgrep.sarif
-
+          
       # Se a ação oficial não funcionar no seu ambiente, você pode
       # descomentar as linhas abaixo para instalar Semgrep com pip e rodar localmente:
       # - name: Setup Python
