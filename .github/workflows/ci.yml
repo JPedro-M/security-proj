@@ -3,10 +3,10 @@ name: CI Pipeline com Análise de Vulnerabilidade
 on:
   push:
     branches:
-      - main
+      - joaomarques
   pull_request:
     branches:
-      - main
+      - joaomarques
 
 jobs:
   build:
@@ -33,4 +33,3 @@ jobs:
       run: |
         # Se estiver usando semgrep globalmente
         semgrep --config=auto --exclude=n
-  
