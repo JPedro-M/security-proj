@@ -13,23 +13,47 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout do código
-      uses: actions/checkout@v3
+      - name: Checkout do código
+        uses: actions/checkout@v3
 
-    - name: Configurar Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16'
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
 
-    - name: Instalar dependências
-      run: |
-        npm install
+      - name: Instalar dependências (npm)
+        run: |
+          npm ci
 
-    # - name: Rodar testes unitários
-    #   run: |
-    #     npm run test
+      - name: Rodar testes unitários (se definidos)
+        run: |
+          npm run test --if-present
 
-    - name: Rodar Análise de Vulnerabilidade com Semgrep
-      run: |
-        # Se estiver usando semgrep globalmente
-        semgrep --config=auto --exclude=n
+      - name: Rodar Semgrep (ação oficial)
+        # Usamos a ação oficial do Semgrep que cuida da instalação
+        uses: returntocorp/semgrep-action@v1
+        with:
+          # Aponta para o arquivo de regras no repositório
+          config: .semgrep.yml
+          # Gera saída SARIF para integração com GitHub
+          sarif_output_file: semgrep.sarif
+
+      - name: Fazer upload do relatório SARIF (opcional)
+        # Isso permite que o GitHub Code Scanning mostre os resultados
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: semgrep.sarif
+
+      # Se a ação oficial não funcionar no seu ambiente, você pode
+      # descomentar as linhas abaixo para instalar Semgrep com pip e rodar localmente:
+      # - name: Setup Python
+      #   uses: actions/setup-python@v4
+      #   with:
+      #     python-version: '3.x'
+      # - name: Instalar semgrep via pip
+      #   run: |
+      #     python -m pip install --upgrade pip
+      #     pip install semgrep
+      # - name: Rodar semgrep (CLI)
+      #   run: |
+      #     semgrep --config .semgrep.yml --sarif > semgrep.sarif

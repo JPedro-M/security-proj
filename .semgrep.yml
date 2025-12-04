@@ -1,0 +1,36 @@
+rules:
+
+  - id: js-eval-usage
+    patterns:
+      - pattern: eval($CODE)
+    message: "Uso de eval — pode levar à execução remota de código. Evite eval()."
+    languages: [javascript, typescript]
+    severity: ERROR
+
+  - id: js-child-process-exec
+    patterns:
+      - pattern: child_process.exec($CMD)
+      - pattern: require("child_process").exec($CMD)
+      - pattern: require('child_process').exec($CMD)
+    message: "Uso de child_process.exec — executa comandos do sistema e pode permitir RCE se não for seguro."
+    languages: [javascript, typescript]
+    severity: ERROR
+
+  - id: js-hardcoded-secret
+    patterns:
+      - pattern: $VAR = "secret"
+      - pattern: $VAR = 'secret'
+      - pattern: $VAR = "JWT_SECRET"
+    message: "Possível segredo hard-coded no código. Use variáveis de ambiente e um cofre de segredos."
+    languages: [javascript, typescript]
+    severity: WARNING
+
+  - id: ts-insecure-orm-query
+    patterns:
+      - pattern: $MODEL.query($SQL)
+    message: "Uso de queries diretas em modelos/ORM — verifique interpolação de parâmetros para evitar SQL injection."
+    languages: [javascript, typescript]
+    severity: WARNING
+
+# Dica: para regras mais precisas e com exemplos de correção, consulte a documentação do Semgrep
+# e adapte os padrões ao seu estilo de código NestJS/TypeScript.
