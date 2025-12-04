@@ -3,10 +3,10 @@ name: CI Pipeline com Análise de Vulnerabilidade
 on:
   push:
     branches:
-      - joaomarques
+      - João-Marques
   pull_request:
     branches:
-      - joaomarques
+      - João-Marques
 
 jobs:
   build:
